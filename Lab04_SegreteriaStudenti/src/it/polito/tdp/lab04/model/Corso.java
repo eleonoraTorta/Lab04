@@ -1,11 +1,14 @@
 package it.polito.tdp.lab04.model;
 
+import java.util.TreeMap;
+
 public class Corso {
 	
 	private String codins;
 	private int crediti;
 	private String nome;
 	private  int pd;
+	private TreeMap <Integer, Studente> iscritti = new TreeMap <Integer,Studente>();
 	
 	/**
 	 * 
@@ -127,6 +130,13 @@ public class Corso {
 	@Override
 	public String toString() {
 		return nome;
+	}
+
+	public void addStudente(Studente studente) {
+		Model m = new Model();
+		Studente s = m.cercaStudentePerMatricola(studente.getMatricola());
+		iscritti.put(s.getMatricola(),s);
+		
 	}
 	
 	
