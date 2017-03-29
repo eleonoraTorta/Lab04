@@ -1,11 +1,14 @@
 package it.polito.tdp.lab04.model;
 
+import java.util.LinkedList;
+
 public class Studente {
 	
 	private int matricola;
 	private String cognome;
 	private String nome;
 	private String cds;
+	private LinkedList <Corso> corsi = new LinkedList <Corso>();
 	
 	/**
 	 * @param matricola
@@ -128,8 +131,23 @@ public class Studente {
 	 */
 	@Override
 	public String toString() {
-		return "Studente [matricola=" + matricola + ", cognome=" + cognome + ", nome=" + nome + ", cds=" + cds + "]";
+		return matricola + " " + cognome + " " + nome + " " + cds;
 	}
+
+	public void addCorso(Corso c) {
+		if(!corsi.contains(c)){
+			corsi.add(c);
+		}	
+	}
+
+	/**
+	 * @return the corsi
+	 */
+	public LinkedList<Corso> getCorsi() {
+		return corsi;
+	}
+	
+	
 	
 	
 	

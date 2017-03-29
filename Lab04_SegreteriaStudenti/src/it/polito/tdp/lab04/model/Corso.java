@@ -1,6 +1,9 @@
 package it.polito.tdp.lab04.model;
 
-import java.util.TreeMap;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class Corso {
 	
@@ -8,7 +11,8 @@ public class Corso {
 	private int crediti;
 	private String nome;
 	private  int pd;
-	private TreeMap <Integer, Studente> iscritti = new TreeMap <Integer,Studente>();
+	private LinkedList <Studente> iscritti = new LinkedList <Studente>();
+
 	
 	/**
 	 * 
@@ -132,16 +136,14 @@ public class Corso {
 		return nome;
 	}
 
-	public void addStudente(Studente studente) {
-		Model m = new Model();
-		Studente s = m.cercaStudentePerMatricola(studente.getMatricola());
-		iscritti.put(s.getMatricola(),s);
+	public void addStudente(Studente s) {
+		if(!iscritti.contains(s)){
+			iscritti.add(s);
+		}
 		
 	}
 	
-	
-	
-	
-	
-
+	public List <Studente> getIscritti(){
+		return iscritti;
+	}
 }

@@ -46,4 +46,30 @@ public class StudenteDAO {
 		}
 		
 	}
+
+	public void cercaCorsi(Studente s) {
+		String sql = "SELECT codins "+
+				"FROM iscrizione "+
+				"WHERE matricola =?";
+		try {
+			Connection conn = ConnectDB.getConnection();           
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setLong(1, s.getMatricola());
+
+			ResultSet rs = st.executeQuery();
+
+			while(rs.next()){
+				Corso c= new Corso(rs.getString("codins"), 0,null,0);
+				CorsoDAO corsoD = new CorsoDAO();
+				corsoD.getCorso(c);
+				s.addCorso(c);
+			}
+			conn.close();
+			
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+
+	}
 }

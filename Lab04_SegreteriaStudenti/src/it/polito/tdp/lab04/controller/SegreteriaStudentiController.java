@@ -54,16 +54,22 @@ public class SegreteriaStudentiController {
 		this.model = model;
 		
 		LinkedList <Corso> corsi = new LinkedList <Corso>(model.getCorsi());
+		Corso c = new Corso(null,0,null,0);
+		corsi.addFirst(c);
 		comboCorso.getItems().addAll(corsi);
 		if(comboCorso.getItems().size() >0){
 	        comboCorso.setValue(comboCorso.getItems().get(0));  
 	        }
+		
 
 	}
 
 	@FXML
 	void doReset(ActionEvent event) {
-
+		txtResult.clear();
+		txtNome.clear();
+		txtCognome.clear();
+		txtMatricola.clear();
 	}
 
 	@FXML
@@ -77,16 +83,52 @@ public class SegreteriaStudentiController {
 
 	@FXML
 	void doCercaIscrittiCorso(ActionEvent event) {
+		Corso corso = comboCorso.getValue();
+		Corso corsoNull = new Corso(null,0,null,0);
+		if( corso.equals(corsoNull)){
+			txtResult.appendText("ERRORE, nessun corso selezionato!");
+		}
+		else{
+		LinkedList <Studente> lista = new LinkedList <Studente>(model.cercaStudentiIscritti(corso));
+		String elenco="";
+		for(Studente s : lista){
+			elenco += s.toString() + "\n";
+		}
+		txtResult.appendText(elenco);
+		}
 
 	}
 
 	@FXML
 	void doCercaCorsi(ActionEvent event) {
-
+		String m = txtMatricola.getText();
+		int matricola = Integer.parseInt(m);
+		Studente s = model.cercaStudentePerMatricola(matricola);
+		if( model.esiste(s)==false){
+			txtResult.appendText("ERRORE, studente non esistente!");
+		}else{
+			LinkedList <Corso> corsi = new LinkedList <Corso>(model.cercaCorsiDatoStudente(s));
+			String elenco="";
+			for(Corso c : corsi){
+				elenco += c.toString() + "\n";
+			}
+			txtResult.appendText(elenco);
+			}
 	}
 
 	@FXML
 	void doIscrivi(ActionEvent event) {
+		Corso corso = comboCorso.getValue();
+		String m = txtMatricola.getText();
+		int matricola = Integer.parseInt(m);
+		Studente s = model.cercaStudentePerMatricola(matricola);
+		if(model.isIscritto(s,corso)==true){
+			txtResult.setText("Studente gia` iscritto a questo corso");
+		}else{
+			if(model.iscrivi(s,corso)==true){
+			txtResult.setText("Studente iscritto al corso!");
+			}
+		}
 
 	}
 
