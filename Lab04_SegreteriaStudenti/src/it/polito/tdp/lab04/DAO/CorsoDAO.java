@@ -75,6 +75,7 @@ public class CorsoDAO {
 			// e.printStackTrace();
 			throw new RuntimeException("Errore Db");
 		}
+		//da finire
 
 	}
 
