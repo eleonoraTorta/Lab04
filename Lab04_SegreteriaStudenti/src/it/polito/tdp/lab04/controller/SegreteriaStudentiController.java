@@ -10,6 +10,7 @@ import it.polito.tdp.lab04.model.Studente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -29,7 +30,7 @@ public class SegreteriaStudentiController {
 	private Button btnCercaCorsi;
 
 	@FXML
-	private Button btnCercaNome;
+	private CheckBox btnCercaNome;
 
 	@FXML
 	private TextArea txtResult;
@@ -50,6 +51,13 @@ public class SegreteriaStudentiController {
 	private TextField txtCognome;
 
 	public void setModel(Model model) {
+		this.model = model;
+		
+		LinkedList <Corso> corsi = new LinkedList <Corso>(model.getCorsi());
+		comboCorso.getItems().addAll(corsi);
+		if(comboCorso.getItems().size() >0){
+	        comboCorso.setValue(comboCorso.getItems().get(0));  
+	        }
 
 	}
 
@@ -60,7 +68,11 @@ public class SegreteriaStudentiController {
 
 	@FXML
 	void doCercaNome(ActionEvent event) {
-
+		String m = txtMatricola.getText();
+		int matricola = Integer.parseInt(m);
+		Studente s = model.cercaStudentePerMatricola(matricola);
+		txtCognome.setText(s.getCognome());
+		txtNome.setText(s.getNome());
 	}
 
 	@FXML
@@ -90,6 +102,8 @@ public class SegreteriaStudentiController {
 		assert btnIscrivi != null : "fx:id=\"btnIscrivi\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
 		assert txtMatricola != null : "fx:id=\"txtMatricola\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
 		assert btnReset != null : "fx:id=\"btnReset\" was not injected: check your FXML file 'SegreteriaStudenti.fxml'.";
+		
+		
 	}
 
 }
