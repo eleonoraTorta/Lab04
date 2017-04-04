@@ -108,12 +108,10 @@ public class SegreteriaStudentiController {
 			txtResult.appendText("ERRORE, studente non esistente!");
 		}else{
 			LinkedList <Corso> corsi = new LinkedList <Corso>(model.cercaCorsiDatoStudente(s));
-			String elenco="";
 			for(Corso c : corsi){
-				elenco += c.toString() + "\n";
-			}
-			txtResult.appendText(elenco);
-			}
+				txtResult.appendText(c.toString() + "\n");
+			}  
+		}
 	}
 
 	@FXML

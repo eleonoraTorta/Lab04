@@ -125,7 +125,7 @@ public class CorsoDAO {
 			int result = st.executeUpdate();
 			conn.close();
 			
-			if(result ==1){
+			if(result != 0){
 				return true;
 			}else{
 				return false;

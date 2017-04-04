@@ -44,7 +44,11 @@ public class Model {
 	public List<Corso> cercaCorsiDatoStudente(Studente s) {
 		StudenteDAO s_dao = new StudenteDAO();
 		s_dao.cercaCorsi(s);
-		return s.getCorsi();
+		LinkedList <Corso> corsi = new LinkedList <Corso>();
+		for(Corso c : s.getCorsi()){
+			corsi.add( this.cercaCorso(c.getCodins()));
+		}
+		return corsi;
 	
 	}
 
@@ -59,5 +63,12 @@ public class Model {
 	public boolean iscrivi(Studente s, Corso corso) {
 		CorsoDAO c_dao = new CorsoDAO();
 		return c_dao.iscrivi(s, corso);
+	}
+	
+	public Corso cercaCorso(String codice){
+		CorsoDAO c_dao = new CorsoDAO ();
+		Corso corso = new Corso(codice,0,null,0);
+		c_dao.getCorso(corso);
+		return corso;
 	}
 }

@@ -60,8 +60,6 @@ public class StudenteDAO {
 
 			while(rs.next()){
 				Corso c= new Corso(rs.getString("codins"), 0,null,0);
-				CorsoDAO corsoD = new CorsoDAO();
-				corsoD.getCorso(c);
 				s.addCorso(c);
 			}
 			conn.close();
