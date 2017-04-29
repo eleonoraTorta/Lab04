@@ -1,17 +1,19 @@
 package it.polito.tdp.lab04.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 
-public class Corso {
+public class Corso implements Comparable <Corso> {
 	
 	private String codins;
 	private int crediti;
 	private String nome;
 	private  int pd;
 	private LinkedList <Studente> iscritti = new LinkedList <Studente>();
+//	private List <Studente> iscritti;
 
 	
 	/**
@@ -146,4 +148,23 @@ public class Corso {
 	public List <Studente> getIscritti(){
 		return iscritti;
 	}
+
+	// per ordinare alfabeticamente (in ordine crescente) i nomi dei corsi
+	@Override
+	public int compareTo(Corso o) {
+		return  this.nome.compareTo(o.nome);
+	}
+	
+	/*
+	public List <Studente> getIscrittiBis(){
+		if( iscritti == null){
+			return new ArrayList<Studente>();      //vuota
+		}
+		return iscritti;
+	}
+	
+	public void setStudentiBis (List <Studente> studenti){
+		this.iscritti =  studenti;
+	}
+	*/
 }

@@ -53,15 +53,22 @@ public class SegreteriaStudentiController {
 	public void setModel(Model model) {
 		this.model = model;
 		
-		LinkedList <Corso> corsi = new LinkedList <Corso>(model.getCorsi());
+		// ottengo tutti i corsi dal model
+		corsi = model.getCorsi();
+		
+		
+		// aggiungo i corsi alla ComboBox
+		Collections.sort((corsi));
+		
 		Corso c = new Corso(null,0,null,0);
-		corsi.addFirst(c);
+		((LinkedList<Corso>) corsi).addFirst(c);
+		
 		comboCorso.getItems().addAll(corsi);
+		
 		if(comboCorso.getItems().size() >0){
 	        comboCorso.setValue(comboCorso.getItems().get(0));  
 	        }
-		
-
+	
 	}
 
 	@FXML
@@ -70,63 +77,149 @@ public class SegreteriaStudentiController {
 		txtNome.clear();
 		txtCognome.clear();
 		txtMatricola.clear();
+		comboCorso.getSelectionModel().clearSelection();  //
 	}
 
 	@FXML
 	void doCercaNome(ActionEvent event) {
-		String m = txtMatricola.getText();
-		int matricola = Integer.parseInt(m);
-		Studente s = model.cercaStudentePerMatricola(matricola);
-		txtCognome.setText(s.getCognome());
-		txtNome.setText(s.getNome());
+		
+		txtResult.clear();
+		txtNome.clear();
+		txtCognome.clear();
+		
+		try{
+			String m = txtMatricola.getText();
+			int matricola = Integer.parseInt(m);
+			Studente s = model.cercaStudentePerMatricola(matricola);
+		
+			if( s == null){
+				txtResult.appendText("Nessun risultato: matricola inesistente");
+				return;
+			}
+			txtCognome.setText(s.getCognome());
+			txtNome.setText(s.getNome());
+		
+		} catch (NumberFormatException e){
+			txtResult.setText("Inserire una matricola nel formato corretto.");
+		} catch (RuntimeException e){
+			txtResult.setText("ERRORE DI CONNESSIONE AL DATABASE!");
+		}
 	}
 
 	@FXML
 	void doCercaIscrittiCorso(ActionEvent event) {
-		Corso corso = comboCorso.getValue();
-		Corso corsoNull = new Corso(null,0,null,0);
-		if( corso.equals(corsoNull)){
-			txtResult.appendText("ERRORE, nessun corso selezionato!");
-		}
-		else{
-		LinkedList <Studente> lista = new LinkedList <Studente>(model.cercaStudentiIscritti(corso));
-		String elenco="";
-		for(Studente s : lista){
-			elenco += s.toString() + "\n";
-		}
-		txtResult.appendText(elenco);
+		
+		txtResult.clear();
+		txtNome.clear();
+		txtCognome.clear();
+		
+		try{
+			Corso corso = comboCorso.getValue();
+			Corso corsoNull = new Corso(null,0,null,0);
+			if( corso.equals(corsoNull)){
+				txtResult.setText("ERRORE, nessun corso selezionato!");
+				return;
+			}
+		
+			List <Studente> lista = model.cercaStudentiIscritti(corso);
+			
+			//Stampo ordinatamente gli studenti
+			for(Studente s : lista){
+				txtResult.appendText(String.format("%-10s ", s.getMatricola()) + 
+									String.format("%-20s ", s.getCognome()) +
+									String.format("%-20s ", s.getNome()) +
+									String.format("%-10s ", s.getCds()) +
+									"\n");
+			}
+		
+		} catch (RuntimeException e){
+			txtResult.setText("ERRORE DI CONNESSIONE AL DATABASE!");
 		}
 
 	}
 
 	@FXML
 	void doCercaCorsi(ActionEvent event) {
-		String m = txtMatricola.getText();
-		int matricola = Integer.parseInt(m);
-		Studente s = model.cercaStudentePerMatricola(matricola);
-		if( model.esiste(s)==false){
-			txtResult.appendText("ERRORE, studente non esistente!");
-		}else{
-			LinkedList <Corso> corsi = new LinkedList <Corso>(model.cercaCorsiDatoStudente(s));
+		
+		txtResult.clear();
+		
+		try{
+			String m = txtMatricola.getText();
+			int matricola = Integer.parseInt(m);
+			Studente s = model.cercaStudentePerMatricola(matricola);
+		
+			if( s == null){
+				txtResult.appendText("Nessun risulato, matricola non esistente");
+				return;
+			}
+			
+			List <Corso> corsi = model.cercaCorsiDatoStudente(s);
+			
+			//Stampo ordinatamente i corsi
 			for(Corso c : corsi){
-				txtResult.appendText(c.toString() + "\n");
-			}  
+				txtResult.appendText(String.format("%-12s ", c.getCodins()) + 
+									String.format("%-4s ", c.getCrediti()) +
+									String.format("%-45s ", c.getNome()) +
+									String.format("%-4s ", c.getPd()) +
+									"\n");
+			}
+			
+		} catch (NumberFormatException e){
+			txtResult.setText("Inserire una matricola nel formato corretto.");
+		} catch (RuntimeException e){
+			txtResult.setText("ERRORE DI CONNESSIONE AL DATABASE!");
 		}
 	}
 
 	@FXML
 	void doIscrivi(ActionEvent event) {
-		Corso corso = comboCorso.getValue();
-		String m = txtMatricola.getText();
-		int matricola = Integer.parseInt(m);
-		Studente s = model.cercaStudentePerMatricola(matricola);
-		if(model.isIscritto(s,corso)==true){
-			txtResult.setText("Studente gia` iscritto a questo corso");
-		}else{
-			if(model.iscrivi(s,corso)==true){
-			txtResult.setText("Studente iscritto al corso!");
+		
+		txtResult.clear();
+		
+		try{
+			Corso corso = comboCorso.getValue();
+			Corso corsoNull = new Corso(null,0,null,0);
+			if( corso.equals(corsoNull)){
+				txtResult.setText("ERRORE, nessun corso selezionato!");
+				return;
 			}
-		}
+			
+			String m = txtMatricola.getText();
+			if( txtMatricola.getText().isEmpty()){
+				txtResult.setText("ERRORE, nessuna matricola inserita!");
+			}
+			int matricola = Integer.parseInt(m);
+			
+			Studente s = model.cercaStudentePerMatricola(matricola);
+			if(s ==null){
+				txtResult.setText("Nessun risultato: matricola inesistente");
+				return;
+			}
+			
+			txtNome.setText(s.getNome());
+			txtCognome.setText(s.getCognome());
+			
+			//controllo se lo studente e` gia iscritto al corso
+			
+			if(model.isIscritto(s,corso)==true){
+				txtResult.setText("Studente gia` iscritto a questo corso");
+				return;
+			}
+			
+			//Iscrivo al corso
+			
+			if(!model.iscrivi(s,corso)){
+					txtResult.setText("Errore durante iscrizione al corso");
+					return;
+			}else{
+				txtResult.setText("Studente iscritto al corso!");
+			}
+				
+			}catch (NumberFormatException e){
+				txtResult.setText("Inserire una matricola nel formato corretto.");
+			} catch (RuntimeException e){
+				txtResult.setText("ERRORE DI CONNESSIONE AL DATABASE!");
+			}
 
 	}
 

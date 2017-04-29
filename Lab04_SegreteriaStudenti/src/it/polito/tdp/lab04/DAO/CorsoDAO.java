@@ -62,7 +62,7 @@ public class CorsoDAO {
 			
 			ResultSet rs = st.executeQuery();
 			
-			if(rs.next()){							
+			if(rs.next()){											// o while ???			
 	
 				corso.setCrediti(rs.getInt("crediti"));
 				corso.setNome(rs.getString("nome"));
@@ -103,10 +103,43 @@ public class CorsoDAO {
 	} catch (SQLException e) {
 		// e.printStackTrace();
 		throw new RuntimeException("Errore Db");
+		}
+	}
+	
+	// OPPURE opzione 2 (bis)
+	
+	/*
+	 * Ottengo tutti gli studenti iscritti al Corso
+	 */
+	public void getStudentiIscrittiAlCorsoBis(Corso corso) {
+		
+		String sql = "SELECT * "+
+					"FROM iscrizione, studente "+
+					"WHERE iscrizione.matricola = studente.matricola AND codins =?";
+		
+		List <Studente> studentiIscrittiAlCorso = new ArrayList <Studente>();
+		
+	try {
+		Connection conn = ConnectDB.getConnection();           
+		PreparedStatement st = conn.prepareStatement(sql);
+		st.setString(1, corso.getCodins());
+		
+		ResultSet rs = st.executeQuery();
+		
+		while(rs.next()){
+			studentiIscrittiAlCorso.add(new Studente(rs.getInt("matricola"), rs.getString("nome"), rs.getString("cognome"), rs.getString("cds")));
+		}
+	//	corso.setStudentiBis(studentiIscrittiAlCorso);
+		conn.close();
+		
+
+	} catch (SQLException e) {
+		// e.printStackTrace();
+		throw new RuntimeException("Errore Db");
+		}
 	}
 		
-		
-	}
+	
 
 	/*
 	 * Data una matricola ed il codice insegnamento,
@@ -123,15 +156,16 @@ public class CorsoDAO {
 			st.setString(2, c.getCodins() );
 			
 			int result = st.executeUpdate();
-			conn.close();
+			boolean returnValue = false;
 			
-			if(result != 0){
-				return true;
+			if(result == 1){
+				returnValue = true;
 			}else{
-				return false;
+				returnValue =  false;
 			}
 
-			
+			conn.close();
+			return returnValue;
 
 		} catch (SQLException e) {
 			// e.printStackTrace();

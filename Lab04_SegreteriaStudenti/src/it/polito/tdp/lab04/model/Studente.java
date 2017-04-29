@@ -1,6 +1,8 @@
 package it.polito.tdp.lab04.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Studente {
 	
@@ -9,6 +11,7 @@ public class Studente {
 	private String nome;
 	private String cds;
 	private LinkedList <Corso> corsi = new LinkedList <Corso>();
+//	private List <Corso> corsi;
 	
 	/**
 	 * @param matricola
@@ -147,8 +150,18 @@ public class Studente {
 		return corsi;
 	}
 	
+	/*
+	public List<Corso> getCorsiBis(){
+		if(corsi == null){
+			return new ArrayList <Corso>();
+		}
+		return corsi;
+	}
 	
-	
+	public void setCorsiBis (List <Corso> corsi){
+		this.corsi = corsi;
+	}
+	*/
 	
 	
 	

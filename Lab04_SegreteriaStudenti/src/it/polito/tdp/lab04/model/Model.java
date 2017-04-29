@@ -9,41 +9,44 @@ import it.polito.tdp.lab04.DAO.StudenteDAO;
 
 public class Model {
 	
-	public Model(){    							
+	
+	private StudenteDAO s_dao;
+	private CorsoDAO c_dao;
+	
+	
+	public Model(){  
+		s_dao = new StudenteDAO();
+		c_dao = new CorsoDAO();
 	}
 	
 	public List<Corso> getCorsi(){
-		CorsoDAO c_dao = new CorsoDAO();
 		return c_dao.getTuttiICorsi();	
 	}
 	
 	public Studente cercaStudentePerMatricola(int matricola){
-		StudenteDAO s_dao = new StudenteDAO();
 		return s_dao.cercaStudente(matricola);
 	}
 	
-	public List <Studente> cercaStudentiIscritti(Corso corso){
-		CorsoDAO c_dao = new CorsoDAO();					
+	public Corso cercaCorso(String codice){
+		Corso corso = new Corso(codice,0,null,0);
+		c_dao.getCorso(corso);
+		return corso;
+	}
+	
+	
+	public List <Studente> cercaStudentiIscritti(Corso corso){					
 	    c_dao.getStudentiIscrittiAlCorso(corso);
+  //    return corso.getStudentiBis();										opzione bis
 	    List <Studente> elenco = new LinkedList <Studente>(); 
 	    for(Studente s : corso.getIscritti()){
 	    	elenco.add(this.cercaStudentePerMatricola(s.getMatricola()));
 	    }
 		return elenco;				
 	}
-
-	public boolean esiste(Studente s) {
-		StudenteDAO s_dao = new StudenteDAO();
-		Studente studente = s_dao.cercaStudente(s.getMatricola());
-		if(studente.equals(null)){
-			return false;
-		}
-		return true;
-	}
-
+	
 	public List<Corso> cercaCorsiDatoStudente(Studente s) {
-		StudenteDAO s_dao = new StudenteDAO();
 		s_dao.cercaCorsi(s);
+	//	return studente.getCorsiBis();
 		LinkedList <Corso> corsi = new LinkedList <Corso>();
 		for(Corso c : s.getCorsi()){
 			corsi.add( this.cercaCorso(c.getCodins()));
@@ -52,8 +55,9 @@ public class Model {
 	
 	}
 
+
 	public boolean isIscritto(Studente s, Corso corso) {
-		LinkedList <Studente> iscritti = new LinkedList <Studente>(this.cercaStudentiIscritti(corso));
+		List <Studente> iscritti = this.cercaStudentiIscritti(corso);
 		if(iscritti.contains(s)){
 			return true;
 		}
@@ -61,14 +65,8 @@ public class Model {
 	}
 
 	public boolean iscrivi(Studente s, Corso corso) {
-		CorsoDAO c_dao = new CorsoDAO();
 		return c_dao.iscrivi(s, corso);
 	}
 	
-	public Corso cercaCorso(String codice){
-		CorsoDAO c_dao = new CorsoDAO ();
-		Corso corso = new Corso(codice,0,null,0);
-		c_dao.getCorso(corso);
-		return corso;
-	}
+	
 }
